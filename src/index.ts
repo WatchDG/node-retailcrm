@@ -9,9 +9,9 @@ import {
 } from "node-result";
 import {
     ApiVersions,
-    Credentials, OrderStatus, OrderStatusGroup, OrderType, PaymentType,
+    Credentials, DeliveryService, OrderStatus, OrderStatusGroup, OrderType, PaymentType,
     ResponseApiVersions,
-    ResponseCredentials, ResponseOrderStatuses,
+    ResponseCredentials, ResponseDeliveryServices, ResponseOrderStatuses,
     ResponseOrderStatusGroups, ResponseOrderTypes, ResponsePaymentTypes, ResponseSites, ResponseUnits, Site, Unit
 } from "./types/response";
 
@@ -126,5 +126,16 @@ export default class RetailCRM {
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/payment-types')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
         return ResultOk(RetailCRM.objectToArray(data.paymentTypes));
+    }
+
+    /**
+     * Получение списка служб доставки.
+     */
+    @tryCatchWrapperAsync
+    async deliveryServices(): ReturningResultAsync<DeliveryService[], Error> {
+        type rT = ResponseDeliveryServices;
+        const {status, data} = (await this.instance.get<rT>('/api/v5/reference/delivery-services')).unwrap();
+        RetailCRM.checkResponse({status, data}).unwrap();
+        return ResultOk(RetailCRM.objectToArray(data.deliveryServices));
     }
 }

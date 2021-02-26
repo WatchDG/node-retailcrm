@@ -97,7 +97,7 @@ export type PaymentType = {
     description: string;
     deliveryTypes: string[];
     paymentStatuses: string[];
-    integrationModule: {
+    integrationModule?: {
         active: boolean;
         name: string;
         logo: string;
@@ -106,4 +106,14 @@ export type PaymentType = {
 
 export type ResponsePaymentTypes = Response & {
     paymentTypes: Record<string, PaymentType>
+};
+
+export type DeliveryService = {
+    name: string;
+    code: string;
+    active: boolean;
+};
+
+export type ResponseDeliveryServices = Response & {
+    deliveryServices: Record<string, DeliveryService>;
 };
