@@ -12,7 +12,7 @@ import {
     Credentials, OrderStatus, OrderStatusGroup,
     ResponseApiVersions,
     ResponseCredentials, ResponseOrderStatuses,
-    ResponseOrderStatusGroups, ResponseUnits, Unit
+    ResponseOrderStatusGroups, ResponseSites, ResponseUnits, Site, Unit
 } from "./types/response";
 
 type RetailCRMOptions = {
@@ -93,5 +93,16 @@ export default class RetailCRM {
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/units')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
         return ResultOk(RetailCRM.objectToArray(data.units));
+    }
+
+    /**
+     * Получение списка магазинов.
+     */
+    @tryCatchWrapperAsync
+    async sites(): ReturningResultAsync<Site[], Error> {
+        type rT = ResponseSites;
+        const {status, data} = (await this.instance.get<rT>('/api/v5/reference/sites')).unwrap();
+        RetailCRM.checkResponse({status, data}).unwrap();
+        return ResultOk(data.sites);
     }
 }

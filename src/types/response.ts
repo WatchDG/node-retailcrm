@@ -53,3 +53,24 @@ export type Unit = {
 export type ResponseUnits = Response & {
     units: Record<string, Unit>
 };
+
+export type Site = {
+    name: string;
+    url: string;
+    code: string;
+    description: string;
+    phones: string;
+    address: string;
+    zip: string;
+    defaultForCrm: boolean;
+    ymlUrl: string;
+    loadFromYml: boolean;
+    catalogUpdatedAt: string;
+    catalogLoadingAt: string;
+    contragent: object;
+    countryIso: string;
+};
+
+export type ResponseSites = Response & {
+    sites: Site[]
+};
