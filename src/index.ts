@@ -61,7 +61,10 @@ export default class RetailCRM {
         type rT = ResponseOrderStatusGroups;
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/status-groups')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(data.statusGroups);
+        const object = data.statusGroups;
+        const array = [];
+        Object.keys(object).forEach(key => array.push(object[key]));
+        return ResultOk(array);
     }
 
     @tryCatchWrapperAsync
@@ -69,6 +72,9 @@ export default class RetailCRM {
         type rT = ResponseOrderStatuses;
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/statuses')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(data.statuses);
+        const object = data.statuses;
+        const array = [];
+        Object.keys(object).forEach(key => array.push(object[key]));
+        return ResultOk(array);
     }
 }

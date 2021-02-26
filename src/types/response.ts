@@ -27,7 +27,7 @@ export type OrderStatusGroup = {
     statuses: string[]
 };
 export type ResponseOrderStatusGroups = Response & {
-    statusGroups: OrderStatusGroup[]
+    statusGroups: Record<string, OrderStatusGroup>
 };
 
 export type OrderStatus = {
@@ -38,5 +38,5 @@ export type OrderStatus = {
     group: string;
 };
 export type ResponseOrderStatuses = Response & {
-    statuses: OrderStatus[];
+    statuses: Record<string, OrderStatus>;
 };
