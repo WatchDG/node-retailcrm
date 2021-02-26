@@ -9,10 +9,10 @@ import {
 } from "node-result";
 import {
     ApiVersions,
-    Credentials, OrderStatus, OrderStatusGroup,
+    Credentials, OrderStatus, OrderStatusGroup, OrderType,
     ResponseApiVersions,
     ResponseCredentials, ResponseOrderStatuses,
-    ResponseOrderStatusGroups, ResponseSites, ResponseUnits, Site, Unit
+    ResponseOrderStatusGroups, ResponseOrderTypes, ResponseSites, ResponseUnits, Site, Unit
 } from "./types/response";
 
 type RetailCRMOptions = {
@@ -104,5 +104,16 @@ export default class RetailCRM {
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/sites')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
         return ResultOk(RetailCRM.objectToArray(data.sites));
+    }
+
+    /**
+     * Получение списка типов заказов.
+     */
+    @tryCatchWrapperAsync
+    async orderTypes(): ReturningResultAsync<OrderType[], Error> {
+        type rT = ResponseOrderTypes;
+        const {status, data} = (await this.instance.get<rT>('/api/v5/reference/order-types')).unwrap();
+        RetailCRM.checkResponse({status, data}).unwrap();
+        return ResultOk(RetailCRM.objectToArray(data.orderTypes));
     }
 }

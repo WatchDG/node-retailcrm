@@ -74,3 +74,16 @@ export type Site = {
 export type ResponseSites = Response & {
     sites: Record<string, Site>
 };
+
+export type OrderType = {
+    name: string;
+    code: string;
+    active: boolean;
+    defaultForCrm: boolean;
+    defaultForApi: boolean;
+    ordering: number;
+};
+
+export type ResponseOrderTypes = Response & {
+    orderTypes: Record<string, OrderType>
+};
