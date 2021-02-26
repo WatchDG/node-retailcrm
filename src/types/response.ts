@@ -17,3 +17,16 @@ export type Credentials = {
 };
 
 export type ResponseCredentials = Response & Credentials;
+
+
+export type OrderStatusGroup = {
+    name: string;
+    code: string;
+    active: boolean;
+    ordering: number;
+    process: boolean;
+    statuses: object[]
+};
+export type ResponseOrderStatusGroups = Response & {
+    statusGroups: OrderStatusGroup[]
+};

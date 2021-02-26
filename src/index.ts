@@ -7,7 +7,13 @@ import {
     tryCatchWrapper,
     tryCatchWrapperAsync
 } from "node-result";
-import {ApiVersions, Credentials, ResponseApiVersions, ResponseCredentials} from "./types/response";
+import {
+    ApiVersions,
+    Credentials, OrderStatusGroup,
+    ResponseApiVersions,
+    ResponseCredentials,
+    ResponseOrderStatusGroups
+} from "./types/response";
 
 type RetailCRMOptions = {
     baseUrl: string;
@@ -45,8 +51,16 @@ export default class RetailCRM {
     @tryCatchWrapperAsync
     async credentials(): ReturningResultAsync<Credentials, Error> {
         type rT = ResponseCredentials;
-        const {status, data} = (await this.instance.get<rT>(' /api/credentials ')).unwrap();
+        const {status, data} = (await this.instance.get<rT>('/api/credentials')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
         return ResultOk(data);
+    }
+
+    @tryCatchWrapperAsync
+    async orderStatusGroups(): ReturningResultAsync<OrderStatusGroup[], Error> {
+        type rT = ResponseOrderStatusGroups;
+        const {status, data} = (await this.instance.get<rT>('/api/v5/reference/status-groups')).unwrap();
+        RetailCRM.checkResponse({status, data}).unwrap();
+        return ResultOk(data.statusGroups);
     }
 }
