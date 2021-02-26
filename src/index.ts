@@ -12,7 +12,7 @@ import {
     Credentials, OrderStatus, OrderStatusGroup,
     ResponseApiVersions,
     ResponseCredentials, ResponseOrderStatuses,
-    ResponseOrderStatusGroups
+    ResponseOrderStatusGroups, ResponseUnits, Unit
 } from "./types/response";
 
 type RetailCRMOptions = {
@@ -56,6 +56,9 @@ export default class RetailCRM {
         return ResultOk(data);
     }
 
+    /**
+     * Получение списка групп статусов заказа.
+     */
     @tryCatchWrapperAsync
     async orderStatusGroups(): ReturningResultAsync<OrderStatusGroup[], Error> {
         type rT = ResponseOrderStatusGroups;
@@ -67,6 +70,9 @@ export default class RetailCRM {
         return ResultOk(array);
     }
 
+    /**
+     * Получение списка статусов заказа.
+     */
     @tryCatchWrapperAsync
     async orderStatuses(): ReturningResultAsync<OrderStatus[], Error> {
         type rT = ResponseOrderStatuses;
@@ -76,5 +82,16 @@ export default class RetailCRM {
         const array = [];
         Object.keys(object).forEach(key => array.push(object[key]));
         return ResultOk(array);
+    }
+
+    /**
+     * Получение списка единиц измерений.
+     */
+    @tryCatchWrapperAsync
+    async units(): ReturningResultAsync<Unit[], Error>{
+        type rT = ResponseUnits;
+        const {status, data} = (await this.instance.get<rT>('/api/v5/reference/units')).unwrap();
+        RetailCRM.checkResponse({status, data}).unwrap();
+        return ResultOk(data.units);
     }
 }

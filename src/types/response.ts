@@ -40,3 +40,16 @@ export type OrderStatus = {
 export type ResponseOrderStatuses = Response & {
     statuses: Record<string, OrderStatus>;
 };
+
+
+export type Unit = {
+    code: string;
+    name: string;
+    sym: string;
+    default: boolean;
+    active: boolean;
+};
+
+export type ResponseUnits = Response & {
+    units: Unit[]
+};
