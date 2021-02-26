@@ -9,10 +9,10 @@ import {
 } from "node-result";
 import {
     ApiVersions,
-    Credentials, OrderStatus, OrderStatusGroup, OrderType,
+    Credentials, OrderStatus, OrderStatusGroup, OrderType, PaymentType,
     ResponseApiVersions,
     ResponseCredentials, ResponseOrderStatuses,
-    ResponseOrderStatusGroups, ResponseOrderTypes, ResponseSites, ResponseUnits, Site, Unit
+    ResponseOrderStatusGroups, ResponseOrderTypes, ResponsePaymentTypes, ResponseSites, ResponseUnits, Site, Unit
 } from "./types/response";
 
 type RetailCRMOptions = {
@@ -115,5 +115,16 @@ export default class RetailCRM {
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/order-types')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
         return ResultOk(RetailCRM.objectToArray(data.orderTypes));
+    }
+
+    /**
+     * Получение списка типов оплаты.
+     */
+    @tryCatchWrapperAsync
+    async paymentTypes(): ReturningResultAsync<PaymentType[], Error> {
+        type rT = ResponsePaymentTypes;
+        const {status, data} = (await this.instance.get<rT>('/api/v5/reference/payment-types')).unwrap();
+        RetailCRM.checkResponse({status, data}).unwrap();
+        return ResultOk(RetailCRM.objectToArray(data.paymentTypes));
     }
 }
