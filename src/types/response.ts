@@ -18,15 +18,25 @@ export type Credentials = {
 
 export type ResponseCredentials = Response & Credentials;
 
-
 export type OrderStatusGroup = {
     name: string;
     code: string;
     active: boolean;
     ordering: number;
     process: boolean;
-    statuses: object[]
+    statuses: string[]
 };
 export type ResponseOrderStatusGroups = Response & {
     statusGroups: OrderStatusGroup[]
+};
+
+export type OrderStatus = {
+    name: string;
+    code: string;
+    active: boolean;
+    ordering: number;
+    group: string;
+};
+export type ResponseOrderStatuses = Response & {
+    statuses: OrderStatus[];
 };

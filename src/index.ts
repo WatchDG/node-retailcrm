@@ -9,9 +9,9 @@ import {
 } from "node-result";
 import {
     ApiVersions,
-    Credentials, OrderStatusGroup,
+    Credentials, OrderStatus, OrderStatusGroup,
     ResponseApiVersions,
-    ResponseCredentials,
+    ResponseCredentials, ResponseOrderStatuses,
     ResponseOrderStatusGroups
 } from "./types/response";
 
@@ -62,5 +62,13 @@ export default class RetailCRM {
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/status-groups')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
         return ResultOk(data.statusGroups);
+    }
+
+    @tryCatchWrapperAsync
+    async orderStatuses(): ReturningResultAsync<OrderStatus[], Error> {
+        type rT = ResponseOrderStatuses;
+        const {status, data} = (await this.instance.get<rT>('/api/v5/reference/statuses')).unwrap();
+        RetailCRM.checkResponse({status, data}).unwrap();
+        return ResultOk(data.statuses);
     }
 }
