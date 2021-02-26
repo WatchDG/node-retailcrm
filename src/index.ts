@@ -40,6 +40,12 @@ export default class RetailCRM {
         return ResultOk(null);
     }
 
+    private static objectToArray<T>(object: Record<string, T>): T[] {
+        const array = [];
+        Object.keys(object).forEach(key => array.push(object[key]));
+        return array;
+    }
+
     @tryCatchWrapperAsync
     async apiVersions(): ReturningResultAsync<ApiVersions, Error> {
         type rT = ResponseApiVersions;
@@ -64,10 +70,7 @@ export default class RetailCRM {
         type rT = ResponseOrderStatusGroups;
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/status-groups')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        const object = data.statusGroups;
-        const array = [];
-        Object.keys(object).forEach(key => array.push(object[key]));
-        return ResultOk(array);
+        return ResultOk(RetailCRM.objectToArray(data.statusGroups));
     }
 
     /**
@@ -78,20 +81,17 @@ export default class RetailCRM {
         type rT = ResponseOrderStatuses;
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/statuses')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        const object = data.statuses;
-        const array = [];
-        Object.keys(object).forEach(key => array.push(object[key]));
-        return ResultOk(array);
+        return ResultOk(RetailCRM.objectToArray(data.statuses));
     }
 
     /**
      * Получение списка единиц измерений.
      */
     @tryCatchWrapperAsync
-    async units(): ReturningResultAsync<Unit[], Error>{
+    async units(): ReturningResultAsync<Unit[], Error> {
         type rT = ResponseUnits;
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/units')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(data.units);
+        return ResultOk(RetailCRM.objectToArray(data.units));
     }
 }

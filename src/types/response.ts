@@ -51,5 +51,5 @@ export type Unit = {
 };
 
 export type ResponseUnits = Response & {
-    units: Unit[]
+    units: Record<string, Unit>
 };
