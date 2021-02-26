@@ -72,5 +72,5 @@ export type Site = {
 };
 
 export type ResponseSites = Response & {
-    sites: Site[]
+    sites: Record<string, Site>
 };

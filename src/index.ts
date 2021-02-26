@@ -103,6 +103,6 @@ export default class RetailCRM {
         type rT = ResponseSites;
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/sites')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(data.sites);
+        return ResultOk(RetailCRM.objectToArray(data.sites));
     }
 }
