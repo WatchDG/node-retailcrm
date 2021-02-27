@@ -9,13 +9,18 @@ import {
 } from "node-result";
 
 import {
-    ApiVersions,
-    Credentials, OrderStatus, OrderStatusGroup, OrderType,
-    ResponseApiVersions,
-    ResponseCredentials, ResponseOrderStatuses,
+    OrderStatus, OrderStatusGroup, OrderType, ResponseOrderStatuses,
     ResponseOrderStatusGroups, ResponseOrderTypes, ResponseSites, ResponseUnits, Site, Unit
 } from "./types/response";
 
+import {
+    ApiVersion,
+    ResponseApiVersions,
+    Credentials,
+    ResponseCredentials,
+    CountryCode,
+    ResponseCountryCodes
+} from "./types/common";
 import {DeliveryService, DeliveryType, ResponseDeliveryServices, ResponseDeliveryTypes} from './types/delivery'
 import {PaymentStatus, PaymentType, ResponsePaymentStatuses, ResponsePaymentTypes} from './types/payment';
 
@@ -24,6 +29,9 @@ type RetailCRMOptions = {
     apiKey: string;
 }
 
+/**
+ * class RetailCRM
+ */
 export default class RetailCRM {
     private readonly instance: HttpInstance;
 
@@ -50,20 +58,59 @@ export default class RetailCRM {
         return array;
     }
 
+    /**
+     * Получение списка доступных версий API.
+     */
     @tryCatchWrapperAsync
-    async apiVersions(): ReturningResultAsync<ApiVersions, Error> {
+    async apiVersions(): ReturningResultAsync<ApiVersion[], Error> {
         type rT = ResponseApiVersions;
         const {status, data} = (await this.instance.get<rT>('/api/api-versions')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(data);
+        return ResultOk(data.versions);
     }
 
+    /**
+     * Получение списка доступных методов и магазинов для данного ключа.
+     */
     @tryCatchWrapperAsync
     async credentials(): ReturningResultAsync<Credentials, Error> {
         type rT = ResponseCredentials;
         const {status, data} = (await this.instance.get<rT>('/api/credentials')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
         return ResultOk(data);
+    }
+
+    /**
+     * Получение списка магазинов.
+     */
+    @tryCatchWrapperAsync
+    async sites(): ReturningResultAsync<Site[], Error> {
+        type rT = ResponseSites;
+        const {status, data} = (await this.instance.get<rT>('/api/v5/reference/sites')).unwrap();
+        RetailCRM.checkResponse({status, data}).unwrap();
+        return ResultOk(RetailCRM.objectToArray(data.sites));
+    }
+
+    /**
+     * Получение списка единиц измерений.
+     */
+    @tryCatchWrapperAsync
+    async units(): ReturningResultAsync<Unit[], Error> {
+        type rT = ResponseUnits;
+        const {status, data} = (await this.instance.get<rT>('/api/v5/reference/units')).unwrap();
+        RetailCRM.checkResponse({status, data}).unwrap();
+        return ResultOk(RetailCRM.objectToArray(data.units));
+    }
+
+    /**
+     * Получение списка кодов доступных стран.
+     */
+    @tryCatchWrapperAsync
+    async countryCodes(): ReturningResultAsync<CountryCode[], Error> {
+        type rT = ResponseCountryCodes;
+        const {status, data} = (await this.instance.get<rT>('/api/v5/reference/countries')).unwrap();
+        RetailCRM.checkResponse({status, data}).unwrap();
+        return ResultOk(RetailCRM.objectToArray(data.countriesIso));
     }
 
     /**
@@ -86,28 +133,6 @@ export default class RetailCRM {
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/statuses')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
         return ResultOk(RetailCRM.objectToArray(data.statuses));
-    }
-
-    /**
-     * Получение списка единиц измерений.
-     */
-    @tryCatchWrapperAsync
-    async units(): ReturningResultAsync<Unit[], Error> {
-        type rT = ResponseUnits;
-        const {status, data} = (await this.instance.get<rT>('/api/v5/reference/units')).unwrap();
-        RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(RetailCRM.objectToArray(data.units));
-    }
-
-    /**
-     * Получение списка магазинов.
-     */
-    @tryCatchWrapperAsync
-    async sites(): ReturningResultAsync<Site[], Error> {
-        type rT = ResponseSites;
-        const {status, data} = (await this.instance.get<rT>('/api/v5/reference/sites')).unwrap();
-        RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(RetailCRM.objectToArray(data.sites));
     }
 
     /**
@@ -142,6 +167,7 @@ export default class RetailCRM {
         RetailCRM.checkResponse({status, data}).unwrap();
         return ResultOk(RetailCRM.objectToArray(data.paymentStatuses));
     }
+
     /**
      * Получение списка служб доставки.
      */
