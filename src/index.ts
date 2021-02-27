@@ -23,6 +23,7 @@ import {
 } from "./types/common";
 import {DeliveryService, DeliveryType, ResponseDeliveryServices, ResponseDeliveryTypes} from './types/delivery'
 import {PaymentStatus, PaymentType, ResponsePaymentStatuses, ResponsePaymentTypes} from './types/payment';
+import {ProductStatus, ResponseProductStatuses} from "./types/product";
 
 type RetailCRMOptions = {
     baseUrl: string;
@@ -188,5 +189,16 @@ export default class RetailCRM {
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/delivery-types')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
         return ResultOk(RetailCRM.objectToArray(data.deliveryTypes));
+    }
+
+    /**
+     * Получение списка статусов товаров в заказе.
+     */
+    @tryCatchWrapperAsync
+    async productStatuses(): ReturningResultAsync<ProductStatus[], Error> {
+        type rT = ResponseProductStatuses;
+        const {status, data} = (await this.instance.get<rT>('/api/v5/reference/product-statuses')).unwrap();
+        RetailCRM.checkResponse({status, data}).unwrap();
+        return ResultOk(RetailCRM.objectToArray(data.productStatuses));
     }
 }
