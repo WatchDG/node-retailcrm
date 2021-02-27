@@ -9,7 +9,8 @@ import {
 } from "node-result";
 
 import {
-    OrderStatus, OrderStatusGroup, OrderType, ResponseOrderStatuses,
+    Info,
+    OrderStatus, OrderStatusGroup, OrderType, ResponseInfo, ResponseOrderStatuses,
     ResponseOrderStatusGroups, ResponseOrderTypes, ResponseSites, ResponseUnits, Site, Unit
 } from "./types/response";
 
@@ -200,5 +201,21 @@ export default class RetailCRM {
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/product-statuses')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
         return ResultOk(RetailCRM.objectToArray(data.productStatuses));
+    }
+
+    /**
+     * Создание/редактирование интеграционного модуля.
+     * @param {IntegrationModuleCode} code
+     * @param {CreateIntegrationModule} createIntegrationModule
+     */
+    @tryCatchWrapperAsync
+    async createIntegrationModule(code: IntegrationModuleCode, createIntegrationModule: CreateIntegrationModule): ReturningResultAsync<Info[], Error> {
+        type rT = ResponseInfo;
+        const {
+            status,
+            data
+        } = (await this.instance.post<rT>(`/api/v5/integration-modules/${code}/edit`, createIntegrationModule)).unwrap();
+        RetailCRM.checkResponse({status, data}).unwrap();
+        return ResultOk(data.info);
     }
 }

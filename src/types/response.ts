@@ -71,3 +71,9 @@ export type OrderType = {
 export type ResponseOrderTypes = Response & {
     orderTypes: Record<string, OrderType>
 };
+
+export type Info = string;
+
+export type ResponseInfo = Response & {
+    info: Info[];
+}

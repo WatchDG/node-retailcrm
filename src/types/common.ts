@@ -16,7 +16,6 @@ export type Credentials = {
 
 export type ResponseCredentials = Response & Credentials;
 
-
 export type CountryCode = string;
 
 export type ResponseCountryCodes = Response & {
