@@ -7,13 +7,17 @@ import {
     tryCatchWrapper,
     tryCatchWrapperAsync
 } from "node-result";
+
 import {
     ApiVersions,
-    Credentials, DeliveryService, OrderStatus, OrderStatusGroup, OrderType, PaymentType,
+    Credentials, OrderStatus, OrderStatusGroup, OrderType,
     ResponseApiVersions,
-    ResponseCredentials, ResponseDeliveryServices, ResponseOrderStatuses,
-    ResponseOrderStatusGroups, ResponseOrderTypes, ResponsePaymentTypes, ResponseSites, ResponseUnits, Site, Unit
+    ResponseCredentials, ResponseOrderStatuses,
+    ResponseOrderStatusGroups, ResponseOrderTypes, ResponseSites, ResponseUnits, Site, Unit
 } from "./types/response";
+
+import {DeliveryService, DeliveryType, ResponseDeliveryServices, ResponseDeliveryTypes} from './types/delivery'
+import {PaymentStatus, PaymentType, ResponsePaymentStatuses, ResponsePaymentTypes} from './types/payment';
 
 type RetailCRMOptions = {
     baseUrl: string;
@@ -129,6 +133,16 @@ export default class RetailCRM {
     }
 
     /**
+     * Получение списка статусов оплаты.
+     */
+    @tryCatchWrapperAsync
+    async paymentStatuses(): ReturningResultAsync<PaymentStatus[], Error> {
+        type rT = ResponsePaymentStatuses;
+        const {status, data} = (await this.instance.get<rT>('/api/v5/reference/payment-statuses')).unwrap();
+        RetailCRM.checkResponse({status, data}).unwrap();
+        return ResultOk(RetailCRM.objectToArray(data.paymentStatuses));
+    }
+    /**
      * Получение списка служб доставки.
      */
     @tryCatchWrapperAsync
@@ -137,5 +151,16 @@ export default class RetailCRM {
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/delivery-services')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
         return ResultOk(RetailCRM.objectToArray(data.deliveryServices));
+    }
+
+    /**
+     * Получение списка типов доставки.
+     */
+    @tryCatchWrapperAsync
+    async deliveryTypes(): ReturningResultAsync<DeliveryType[], Error> {
+        type rT = ResponseDeliveryTypes;
+        const {status, data} = (await this.instance.get<rT>('/api/v5/reference/delivery-types')).unwrap();
+        RetailCRM.checkResponse({status, data}).unwrap();
+        return ResultOk(RetailCRM.objectToArray(data.deliveryTypes));
     }
 }

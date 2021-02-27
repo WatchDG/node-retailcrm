@@ -87,33 +87,3 @@ export type OrderType = {
 export type ResponseOrderTypes = Response & {
     orderTypes: Record<string, OrderType>
 };
-
-export type PaymentType = {
-    name: string;
-    code: string;
-    active: boolean;
-    defaultForCrm: boolean;
-    defaultForApi: boolean;
-    description: string;
-    deliveryTypes: string[];
-    paymentStatuses: string[];
-    integrationModule?: {
-        active: boolean;
-        name: string;
-        logo: string;
-    }
-};
-
-export type ResponsePaymentTypes = Response & {
-    paymentTypes: Record<string, PaymentType>
-};
-
-export type DeliveryService = {
-    name: string;
-    code: string;
-    active: boolean;
-};
-
-export type ResponseDeliveryServices = Response & {
-    deliveryServices: Record<string, DeliveryService>;
-};
