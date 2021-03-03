@@ -211,10 +211,13 @@ export default class RetailCRM {
     @tryCatchWrapperAsync
     async createIntegrationModule(code: IntegrationModuleCode, createIntegrationModule: CreateIntegrationModule): ReturningResultAsync<Info[], Error> {
         type rT = ResponseInfo;
+        const payload = {
+            integrationModule: createIntegrationModule
+        };
         const {
             status,
             data
-        } = (await this.instance.post<rT>(`/api/v5/integration-modules/${code}/edit`, createIntegrationModule)).unwrap();
+        } = (await this.instance.post<rT>(`/api/v5/integration-modules/${code}/edit`, payload)).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
         return ResultOk(data.info);
     }
