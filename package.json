@@ -12,7 +12,6 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "form-urlencoded": "^4.2.1",
     "http-instance": "^6.3.0",
     "node-result": "^9.2.0"
   },

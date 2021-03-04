@@ -1,5 +1,5 @@
 import {HttpInstance} from "http-instance";
-import formurlencoded from 'form-urlencoded';
+import {URLSearchParams} from 'url';
 
 import {
     ResultFail,
@@ -213,13 +213,12 @@ export default class RetailCRM {
     @tryCatchWrapperAsync
     async createIntegrationModule(code: IntegrationModuleCode, createIntegrationModule: CreateIntegrationModule): ReturningResultAsync<Info[], Error> {
         type rT = ResponseInfo;
-        const payload = formurlencoded({
-            integrationModule: createIntegrationModule
-        });
+        let payload = new URLSearchParams();
+        payload.append("integrationModule", JSON.stringify(createIntegrationModule));
         const {
             status,
             data
-        } = (await this.instance.post<rT>(`/api/v5/integration-modules/${code}/edit`, payload, {
+        } = (await this.instance.post<rT>(`/api/v5/integration-modules/${code}/edit`, payload.toString(), {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
