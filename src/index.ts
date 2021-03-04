@@ -1,4 +1,6 @@
 import {HttpInstance} from "http-instance";
+import formurlencoded from 'form-urlencoded';
+
 import {
     ResultFail,
     ResultOk,
@@ -211,13 +213,17 @@ export default class RetailCRM {
     @tryCatchWrapperAsync
     async createIntegrationModule(code: IntegrationModuleCode, createIntegrationModule: CreateIntegrationModule): ReturningResultAsync<Info[], Error> {
         type rT = ResponseInfo;
-        const payload = {
+        const payload = formurlencoded({
             integrationModule: createIntegrationModule
-        };
+        });
         const {
             status,
             data
-        } = (await this.instance.post<rT>(`/api/v5/integration-modules/${code}/edit`, payload)).unwrap();
+        } = (await this.instance.post<rT>(`/api/v5/integration-modules/${code}/edit`, payload, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
         return ResultOk(data.info);
     }
