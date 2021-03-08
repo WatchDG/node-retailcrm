@@ -1,5 +1,5 @@
-type IntegrationModuleCode = string;
-type IntegrationModuleIntegrationCode = string;
+export type IntegrationModuleCode = string;
+export type IntegrationModuleIntegrationCode = string;
 
 type CreateIntegrationModuleIntegrationsDeliveryStatus = {
     code: string;
@@ -83,7 +83,7 @@ type CreateIntegrationModuleIntegrationsDelivery = {
     settings: Partial<CreateIntegrationModuleIntegrationsDeliverySettings>;
 };
 
-type CreateIntegrationModule = {
+export type CreateIntegrationModule = {
     code: IntegrationModuleCode;
     integrationCode: IntegrationModuleIntegrationCode;
     active: boolean;
@@ -91,7 +91,7 @@ type CreateIntegrationModule = {
     logo: string;
     clientId: string;
     baseUrl: string;
-    actions: string[];
+    actions: Record<string, string>;
     availableCountries: string[];
     accountUrl: string;
     integrations: {

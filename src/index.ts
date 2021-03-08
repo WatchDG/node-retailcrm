@@ -27,6 +27,7 @@ import {
 import {DeliveryService, DeliveryType, ResponseDeliveryServices, ResponseDeliveryTypes} from './types/delivery'
 import {PaymentStatus, PaymentType, ResponsePaymentStatuses, ResponsePaymentTypes} from './types/payment';
 import {ProductStatus, ResponseProductStatuses} from "./types/product";
+import {CreateIntegrationModule, IntegrationModuleCode} from './types/integration';
 
 type RetailCRMOptions = {
     baseUrl: string;
@@ -49,11 +50,11 @@ export default class RetailCRM {
     }
 
     @tryCatchWrapper
-    private static checkResponse(response: { status: number, data: { success: boolean } }): ReturningResult<null, Error> {
-        const {status, data} = response;
+    private static checkResponse(response: { status: number, data: { success: boolean, errorMsg?: string } }): ReturningResult<null, Error> {
+        const {status, data: {success, errorMsg}} = response;
         if(status !== 200){
-            if (!data.success) return ResultFail(new Error(`[${status}] ${JSON.stringify(data)}`));
-            return ResultFail(new Error(`Status code not success: ${status}`));
+            if (!success) return ResultFail(new Error(`[${status}] ${errorMsg}`));
+            return ResultFail(new Error(`[${status}]`));
         }
         return ResultOk(null);
     }
@@ -213,7 +214,7 @@ export default class RetailCRM {
      * @param {CreateIntegrationModule} createIntegrationModule
      */
     @tryCatchWrapperAsync
-    async createIntegrationModule(code: IntegrationModuleCode, createIntegrationModule: CreateIntegrationModule): ReturningResultAsync<Info[], Error> {
+    async createIntegrationModule(code: IntegrationModuleCode, createIntegrationModule: Partial<CreateIntegrationModule>): ReturningResultAsync<Info[], Error> {
         type rT = ResponseInfo;
         let payload = new URLSearchParams();
         payload.append("integrationModule", JSON.stringify(createIntegrationModule));
@@ -222,7 +223,7 @@ export default class RetailCRM {
             data
         } = (await this.instance.post<rT>(`/api/v5/integration-modules/${code}/edit`, payload.toString(), {
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'content-type': 'application/x-www-form-urlencoded'
             }
         })).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();

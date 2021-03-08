@@ -21,10 +21,11 @@
   "scripts": {
     "build": "npx tsc",
     "lint": "npx eslint --ext=ts src",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "run": "npx ts-node src/index.ts"
   },
   "dependencies": {
-    "http-instance": "^7.0.2",
+    "http-instance": "^7.0.3",
     "node-result": "^10.0.0"
   },
   "devDependencies": {
@@ -32,6 +33,7 @@
     "@typescript-eslint/eslint-plugin": "^4.16.1",
     "@typescript-eslint/parser": "^4.16.1",
     "eslint": "^7.21.0",
+    "ts-node": "^9.1.1",
     "typescript": "^4.2.3"
   }
 }
