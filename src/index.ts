@@ -30,7 +30,6 @@ import {ProductStatus, ResponseProductStatuses} from "./types/product";
 import {CreateIntegrationModule, IntegrationModuleCode} from './types/integration';
 
 /**
- * Options type
  * @alias Options
  */
 type Options = {
@@ -51,7 +50,7 @@ export class RetailCRM {
     private readonly instance: HttpInstance;
 
     /**
-     * constructor
+     * class constructor
      * @param {Options} options - options
      */
     constructor(options: Options) {
@@ -114,6 +113,7 @@ export class RetailCRM {
 
     /**
      * Получение списка единиц измерений.
+     * @return ReturningResultAsync<Unit[], Error>>
      */
     @tryCatchWrapperAsync
     async units(): ReturningResultAsync<Unit[], Error> {
@@ -242,5 +242,17 @@ export class RetailCRM {
         })).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
         return ResultOk(data.info);
+    }
+
+    /**
+     * Получение интеграционного модуля
+     * @param code
+     */
+    @tryCatchWrapperAsync
+    async getIntegrationModule(code: IntegrationModuleCode): ReturningResultAsync<Record<string, any>, Error> {
+        type rT = any;
+        const {status, data} = (await this.instance.get<rT>(`/api/v5/integration-modules/${code}`)).unwrap();
+        RetailCRM.checkResponse({status, data}).unwrap();
+        return ResultOk(data.integrationModule);
     }
 }

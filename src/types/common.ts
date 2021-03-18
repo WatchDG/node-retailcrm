@@ -21,3 +21,8 @@ export type CountryCode = string;
 export type ResponseCountryCodes = Response & {
     countriesIso: Record<string, CountryCode>;
 };
+
+/**
+ * @alias ClientId
+ */
+export type ClientId = string;
