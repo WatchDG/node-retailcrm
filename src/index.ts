@@ -29,18 +29,32 @@ import {PaymentStatus, PaymentType, ResponsePaymentStatuses, ResponsePaymentType
 import {ProductStatus, ResponseProductStatuses} from "./types/product";
 import {CreateIntegrationModule, IntegrationModuleCode} from './types/integration';
 
-type RetailCRMOptions = {
+/**
+ * Options type
+ * @alias Options
+ */
+type Options = {
+    /**
+     * base url
+     */
     baseUrl: string;
+    /**
+     * api key
+     */
     apiKey: string;
 }
 
 /**
  * class RetailCRM
  */
-export default class RetailCRM {
+export class RetailCRM {
     private readonly instance: HttpInstance;
 
-    constructor(options: RetailCRMOptions) {
+    /**
+     * constructor
+     * @param {Options} options - options
+     */
+    constructor(options: Options) {
         this.instance = new HttpInstance({
             baseUrl: options.baseUrl,
             headers: {
@@ -52,7 +66,7 @@ export default class RetailCRM {
     @tryCatchWrapper
     private static checkResponse(response: { status: number, data: { success: boolean, errorMsg?: string } }): ReturningResult<null, Error> {
         const {status, data: {success, errorMsg}} = response;
-        if(status !== 200){
+        if (status !== 200) {
             if (!success) return ResultFail(new Error(`[${status}] ${errorMsg}`));
             return ResultFail(new Error(`[${status}]`));
         }
@@ -216,7 +230,7 @@ export default class RetailCRM {
     @tryCatchWrapperAsync
     async createIntegrationModule(code: IntegrationModuleCode, createIntegrationModule: Partial<CreateIntegrationModule>): ReturningResultAsync<Info[], Error> {
         type rT = ResponseInfo;
-        let payload = new URLSearchParams();
+        const payload = new URLSearchParams();
         payload.append("integrationModule", JSON.stringify(createIntegrationModule));
         const {
             status,
