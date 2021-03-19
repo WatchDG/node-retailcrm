@@ -27,7 +27,12 @@ import {
 import {DeliveryService, DeliveryType, ResponseDeliveryServices, ResponseDeliveryTypes} from './types/delivery'
 import {PaymentStatus, PaymentType, ResponsePaymentStatuses, ResponsePaymentTypes} from './types/payment';
 import {ProductStatus, ResponseProductStatuses} from "./types/product";
-import {CreateIntegrationModule, IntegrationModuleCode} from './types/integration';
+import {
+    CreateIntegrationModule,
+    IntegrationModule,
+    IntegrationModuleCode,
+    ResponseIntegrationModule
+} from './types/integration';
 
 /**
  * @alias Options
@@ -249,8 +254,8 @@ export class RetailCRM {
      * @param code
      */
     @tryCatchWrapperAsync
-    async getIntegrationModule(code: IntegrationModuleCode): ReturningResultAsync<Record<string, any>, Error> {
-        type rT = any;
+    async getIntegrationModule(code: IntegrationModuleCode): ReturningResultAsync<IntegrationModule, Error> {
+        type rT = ResponseIntegrationModule;
         const {status, data} = (await this.instance.get<rT>(`/api/v5/integration-modules/${code}`)).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
         return ResultOk(data.integrationModule);

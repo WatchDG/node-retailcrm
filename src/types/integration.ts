@@ -1,5 +1,14 @@
-export type IntegrationModuleCode = string;
+import {Response} from "./response";
+
+/**
+ * Символьный код модуля (должен совпадать с кодом модуля, заданным через партнерский кабинет)
+ */
 export type IntegrationModuleIntegrationCode = string;
+
+/**
+ * Символьный код экземпляра модуля
+ */
+export type IntegrationModuleCode = string;
 
 type CreateIntegrationModuleIntegrationsDeliveryStatus = {
     code: string;
@@ -65,7 +74,7 @@ type CreateIntegrationModuleIntegrationsDeliverySettings = {
 
 type CreateIntegrationModuleIntegrationsDelivery = {
     description: string;
-    actions: string[];
+    actions: Record<'calculate' | 'shipmentPointList' | string, string>;
     payerType: string[];
     platePrintLimit: number;
     rateDeliveryCost: boolean;
@@ -98,3 +107,19 @@ export type CreateIntegrationModule = {
         delivery?: Partial<CreateIntegrationModuleIntegrationsDelivery>
     };
 };
+
+export type IntegrationModule = {
+    code: IntegrationModuleCode;
+    integrationCode: IntegrationModuleIntegrationCode;
+    active: boolean;
+    freeze: boolean;
+    native: boolean;
+    baseUrl: string;
+    actions: Record<string, string>;
+    availableCountries: string[];
+    accountUrl?: string;
+};
+
+export type ResponseIntegrationModule = {
+    integrationModule: IntegrationModule
+} & Response;
