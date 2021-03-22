@@ -118,6 +118,9 @@ export type IntegrationModule = {
     actions: Record<string, string>;
     availableCountries: string[];
     accountUrl?: string;
+    integrations?: {
+        delivery?: Record<string, any>;
+    }
 };
 
 export type ResponseIntegrationModule = {
