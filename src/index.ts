@@ -12,7 +12,7 @@ import {
 
 import {
     Info,
-    OrderStatus, OrderStatusGroup, OrderType, ResponseInfo, ResponseOrderStatuses,
+    OrderStatus, OrderStatusGroup, OrderType, Response, ResponseInfo, ResponseOrderStatuses,
     ResponseOrderStatusGroups, ResponseOrderTypes, ResponseSites, ResponseUnits, Site, Unit
 } from "./types/response";
 
@@ -24,7 +24,12 @@ import {
     CountryCode,
     ResponseCountryCodes
 } from "./types/common";
-import {DeliveryService, DeliveryType, ResponseDeliveryServices, ResponseDeliveryTypes} from './types/delivery'
+import {
+    ResponseDeliveryServices,
+    DeliveryService,
+    CreateDeliveryService,
+    DeliveryServiceCode
+} from "./types/delivery_service";
 import {PaymentStatus, PaymentType, ResponsePaymentStatuses, ResponsePaymentTypes} from './types/payment';
 import {ProductStatus, ResponseProductStatuses} from "./types/product";
 import {
@@ -33,6 +38,14 @@ import {
     IntegrationModuleCode,
     ResponseIntegrationModule
 } from './types/integration';
+import {
+    CreateDeliveryType,
+    DeliveryType,
+    DeliveryTypeCode,
+    ResponseDeliveryTypes,
+    UpdateDeliveryType
+} from "./types/delivery-type";
+import {ResponseStores, Store} from "./types/store";
 
 /**
  * @alias Options
@@ -70,13 +83,19 @@ export class RetailCRM {
     @tryCatchWrapper
     private static checkResponse(response: { status: number, data: { success: boolean, errorMsg?: string } }): ReturningResult<null, Error> {
         const {status, data: {success, errorMsg}} = response;
-        if (status !== 200) {
+        if (status < 200 || status >= 300) {
             if (!success) return ResultFail(new Error(`[${status}] ${errorMsg}`));
             return ResultFail(new Error(`[${status}]`));
         }
         return ResultOk(null);
     }
 
+    /**
+     * Convert object to array.
+     * @param {object} object - object
+     * @return {array} - array
+     * @private
+     */
     private static objectToArray<T>(object: Record<string, T>): T[] {
         const array = [];
         Object.keys(object).forEach(key => array.push(object[key]));
@@ -206,6 +225,22 @@ export class RetailCRM {
     }
 
     /**
+     * Создание/редактирование службы доставки
+     * @param {CreateDeliveryService} createDeliveryService - объект создания службы доставки
+     */
+    @tryCatchWrapperAsync
+    async createDeliveryService(createDeliveryService: CreateDeliveryService): ReturningResultAsync<boolean, Error> {
+        type rT = Response;
+        const {code} = createDeliveryService;
+        const {
+            status,
+            data
+        } = (await this.instance.post<rT>(`/api/v5/reference/delivery-services/${code}/edit`)).unwrap();
+        RetailCRM.checkResponse({status, data}).unwrap();
+        return ResultOk(data.success);
+    }
+
+    /**
      * Получение списка типов доставки.
      */
     @tryCatchWrapperAsync
@@ -214,6 +249,45 @@ export class RetailCRM {
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/delivery-types')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
         return ResultOk(RetailCRM.objectToArray(data.deliveryTypes));
+    }
+
+    /**
+     * Создание/редактирование типа доставки
+     * @param {CreateDeliveryType} createDeliveryType - объект создания типа доставки
+     */
+    @tryCatchWrapperAsync
+    async createDeliveryType(createDeliveryType: CreateDeliveryType): ReturningResultAsync<boolean, Error> {
+        type rT = Response;
+        const {code} = createDeliveryType;
+        const payload = new URLSearchParams();
+        payload.append("deliveryType", JSON.stringify(createDeliveryType));
+        const {
+            status,
+            data
+        } = (await this.instance.post<rT>(`/api/v5/reference/delivery-types/${code}/edit`, payload.toString(), {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded'
+            }
+        })).unwrap();
+        RetailCRM.checkResponse({status, data}).unwrap();
+        return ResultOk(data.success);
+    }
+
+    @tryCatchWrapperAsync
+    async updateDeliveryType(code: DeliveryTypeCode, updateDeliveryType: UpdateDeliveryType): ReturningResultAsync<boolean, Error> {
+        type rT = Response;
+        const payload = new URLSearchParams();
+        payload.append("deliveryType", JSON.stringify(updateDeliveryType));
+        const {
+            status,
+            data
+        } = (await this.instance.post<rT>(`/api/v5/reference/delivery-types/${code}/edit`, payload.toString(), {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded'
+            }
+        })).unwrap();
+        RetailCRM.checkResponse({status, data}).unwrap();
+        return ResultOk(data.success);
     }
 
     /**
@@ -228,6 +302,17 @@ export class RetailCRM {
     }
 
     /**
+     * Получение списка складов
+     */
+    @tryCatchWrapperAsync
+    async stores(): ReturningResultAsync<Store[], Error> {
+        type rT = ResponseStores;
+        const {status, data} = (await this.instance.get<rT>('/api/v5/reference/stores')).unwrap();
+        RetailCRM.checkResponse({status, data}).unwrap();
+        return ResultOk(RetailCRM.objectToArray(data.stores));
+    }
+
+    /**
      * Создание/редактирование интеграционного модуля.
      * @param {IntegrationModuleCode} code
      * @param {CreateIntegrationModule} createIntegrationModule
@@ -239,6 +324,7 @@ export class RetailCRM {
         payload.append("integrationModule", JSON.stringify(createIntegrationModule));
         const {
             status,
+            headers,
             data
         } = (await this.instance.post<rT>(`/api/v5/integration-modules/${code}/edit`, payload.toString(), {
             headers: {
