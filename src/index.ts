@@ -81,10 +81,10 @@ export class RetailCRM {
     }
 
     @tryCatchWrapper
-    private static checkResponse(response: { status: number, data: { success: boolean, errorMsg?: string } }): ReturningResult<null, Error> {
-        const {status, data: {success, errorMsg}} = response;
+    private static checkResponse(response: { status: number, data: { success: boolean, errorMsg?: string, errors?: Record<string, unknown> } }): ReturningResult<null, Error> {
+        const {status, data: {success, errorMsg, errors}} = response;
         if (status < 200 || status >= 300) {
-            if (!success) return ResultFail(new Error(`[${status}] ${errorMsg}`));
+            if (!success) return ResultFail(new Error(`[${status}] ${errorMsg} | ${JSON.stringify(errors)}`));
             return ResultFail(new Error(`[${status}]`));
         }
         return ResultOk(null);
