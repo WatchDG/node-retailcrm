@@ -346,4 +346,14 @@ export class RetailCRM {
         RetailCRM.checkResponse({status, data}).unwrap();
         return ResultOk(data.integrationModule);
     }
+
+    @tryCatchWrapperAsync
+    async getOrder(orderId: string, site?: string, by: 'externalId' | 'id' = 'externalId'): ReturningResultAsync<Record<string, any>, Error> {
+        type rT = Record<string, any> & Response;
+        let params = `?by=${by}`;
+        if (site) params += `&site=${site}`;
+        const {status, data} = (await this.instance.get<rT>(`/api/v5/orders/${orderId}${params}`)).unwrap();
+        RetailCRM.checkResponse({status, data}).unwrap();
+        return ResultOk(data.order);
+    }
 }
