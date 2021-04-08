@@ -1,14 +1,8 @@
 import {HttpInstance} from "http-instance";
 import {URLSearchParams} from 'url';
 
-import {
-    ResultFail,
-    ResultOk,
-    ReturningResult,
-    ReturningResultAsync,
-    tryCatchWrapper,
-    tryCatchWrapperAsync
-} from "node-result";
+import {fail, ok, tryCatch, tryCatchAsync} from "node-result";
+import type {TResult, TResultAsync} from "node-result";
 
 import {
     Info,
@@ -80,14 +74,14 @@ export class RetailCRM {
         })
     }
 
-    @tryCatchWrapper
-    private static checkResponse(response: { status: number, data: { success: boolean, errorMsg?: string, errors?: Record<string, unknown> } }): ReturningResult<null, Error> {
+    @tryCatch
+    private static checkResponse(response: { status: number, data: { success: boolean, errorMsg?: string, errors?: Record<string, unknown> } }): TResult<null, Error> {
         const {status, data: {success, errorMsg, errors}} = response;
         if (status < 200 || status >= 300) {
-            if (!success) return ResultFail(new Error(`[${status}] ${errorMsg} | ${JSON.stringify(errors)}`));
-            return ResultFail(new Error(`[${status}]`));
+            if (!success) return fail(new Error(`[${status}] ${errorMsg} | ${JSON.stringify(errors)}`));
+            return fail(new Error(`[${status}]`));
         }
-        return ResultOk(null);
+        return ok(null);
     }
 
     /**
@@ -105,131 +99,131 @@ export class RetailCRM {
     /**
      * Получение списка доступных версий API.
      */
-    @tryCatchWrapperAsync
-    async apiVersions(): ReturningResultAsync<ApiVersion[], Error> {
+    @tryCatchAsync
+    async apiVersions(): TResultAsync<ApiVersion[], Error> {
         type rT = ResponseApiVersions;
         const {status, data} = (await this.instance.get<rT>('/api/api-versions')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(data.versions);
+        return ok(data.versions);
     }
 
     /**
      * Получение списка доступных методов и магазинов для данного ключа.
      */
-    @tryCatchWrapperAsync
-    async credentials(): ReturningResultAsync<Credentials, Error> {
+    @tryCatchAsync
+    async credentials(): TResultAsync<Credentials, Error> {
         type rT = ResponseCredentials;
         const {status, data} = (await this.instance.get<rT>('/api/credentials')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(data);
+        return ok(data);
     }
 
     /**
      * Получение списка магазинов.
      */
-    @tryCatchWrapperAsync
-    async sites(): ReturningResultAsync<Site[], Error> {
+    @tryCatchAsync
+    async sites(): TResultAsync<Site[], Error> {
         type rT = ResponseSites;
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/sites')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(RetailCRM.objectToArray(data.sites));
+        return ok(RetailCRM.objectToArray(data.sites));
     }
 
     /**
      * Получение списка единиц измерений.
-     * @return ReturningResultAsync<Unit[], Error>>
+     * @return TResultAsync<Unit[], Error>>
      */
-    @tryCatchWrapperAsync
-    async units(): ReturningResultAsync<Unit[], Error> {
+    @tryCatchAsync
+    async units(): TResultAsync<Unit[], Error> {
         type rT = ResponseUnits;
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/units')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(RetailCRM.objectToArray(data.units));
+        return ok(RetailCRM.objectToArray(data.units));
     }
 
     /**
      * Получение списка кодов доступных стран.
      */
-    @tryCatchWrapperAsync
-    async countryCodes(): ReturningResultAsync<CountryCode[], Error> {
+    @tryCatchAsync
+    async countryCodes(): TResultAsync<CountryCode[], Error> {
         type rT = ResponseCountryCodes;
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/countries')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(RetailCRM.objectToArray(data.countriesIso));
+        return ok(RetailCRM.objectToArray(data.countriesIso));
     }
 
     /**
      * Получение списка групп статусов заказа.
      */
-    @tryCatchWrapperAsync
-    async orderStatusGroups(): ReturningResultAsync<OrderStatusGroup[], Error> {
+    @tryCatchAsync
+    async orderStatusGroups(): TResultAsync<OrderStatusGroup[], Error> {
         type rT = ResponseOrderStatusGroups;
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/status-groups')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(RetailCRM.objectToArray(data.statusGroups));
+        return ok(RetailCRM.objectToArray(data.statusGroups));
     }
 
     /**
      * Получение списка статусов заказа.
      */
-    @tryCatchWrapperAsync
-    async orderStatuses(): ReturningResultAsync<OrderStatus[], Error> {
+    @tryCatchAsync
+    async orderStatuses(): TResultAsync<OrderStatus[], Error> {
         type rT = ResponseOrderStatuses;
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/statuses')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(RetailCRM.objectToArray(data.statuses));
+        return ok(RetailCRM.objectToArray(data.statuses));
     }
 
     /**
      * Получение списка типов заказов.
      */
-    @tryCatchWrapperAsync
-    async orderTypes(): ReturningResultAsync<OrderType[], Error> {
+    @tryCatchAsync
+    async orderTypes(): TResultAsync<OrderType[], Error> {
         type rT = ResponseOrderTypes;
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/order-types')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(RetailCRM.objectToArray(data.orderTypes));
+        return ok(RetailCRM.objectToArray(data.orderTypes));
     }
 
     /**
      * Получение списка типов оплаты.
      */
-    @tryCatchWrapperAsync
-    async paymentTypes(): ReturningResultAsync<PaymentType[], Error> {
+    @tryCatchAsync
+    async paymentTypes(): TResultAsync<PaymentType[], Error> {
         type rT = ResponsePaymentTypes;
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/payment-types')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(RetailCRM.objectToArray(data.paymentTypes));
+        return ok(RetailCRM.objectToArray(data.paymentTypes));
     }
 
     /**
      * Получение списка статусов оплаты.
      */
-    @tryCatchWrapperAsync
-    async paymentStatuses(): ReturningResultAsync<PaymentStatus[], Error> {
+    @tryCatchAsync
+    async paymentStatuses(): TResultAsync<PaymentStatus[], Error> {
         type rT = ResponsePaymentStatuses;
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/payment-statuses')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(RetailCRM.objectToArray(data.paymentStatuses));
+        return ok(RetailCRM.objectToArray(data.paymentStatuses));
     }
 
     /**
      * Получение списка служб доставки.
      */
-    @tryCatchWrapperAsync
-    async deliveryServices(): ReturningResultAsync<DeliveryService[], Error> {
+    @tryCatchAsync
+    async deliveryServices(): TResultAsync<DeliveryService[], Error> {
         type rT = ResponseDeliveryServices;
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/delivery-services')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(RetailCRM.objectToArray(data.deliveryServices));
+        return ok(RetailCRM.objectToArray(data.deliveryServices));
     }
 
     /**
      * Создание/редактирование службы доставки
      * @param {CreateDeliveryService} createDeliveryService - объект создания службы доставки
      */
-    @tryCatchWrapperAsync
-    async createDeliveryService(createDeliveryService: CreateDeliveryService): ReturningResultAsync<boolean, Error> {
+    @tryCatchAsync
+    async createDeliveryService(createDeliveryService: CreateDeliveryService): TResultAsync<boolean, Error> {
         type rT = Response;
         const {code} = createDeliveryService;
         const {
@@ -237,26 +231,26 @@ export class RetailCRM {
             data
         } = (await this.instance.post<rT>(`/api/v5/reference/delivery-services/${code}/edit`)).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(data.success);
+        return ok(data.success);
     }
 
     /**
      * Получение списка типов доставки.
      */
-    @tryCatchWrapperAsync
-    async deliveryTypes(): ReturningResultAsync<DeliveryType[], Error> {
+    @tryCatchAsync
+    async deliveryTypes(): TResultAsync<DeliveryType[], Error> {
         type rT = ResponseDeliveryTypes;
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/delivery-types')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(RetailCRM.objectToArray(data.deliveryTypes));
+        return ok(RetailCRM.objectToArray(data.deliveryTypes));
     }
 
     /**
      * Создание/редактирование типа доставки
      * @param {CreateDeliveryType} createDeliveryType - объект создания типа доставки
      */
-    @tryCatchWrapperAsync
-    async createDeliveryType(createDeliveryType: CreateDeliveryType): ReturningResultAsync<boolean, Error> {
+    @tryCatchAsync
+    async createDeliveryType(createDeliveryType: CreateDeliveryType): TResultAsync<boolean, Error> {
         type rT = Response;
         const {code} = createDeliveryType;
         const payload = new URLSearchParams();
@@ -270,11 +264,11 @@ export class RetailCRM {
             }
         })).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(data.success);
+        return ok(data.success);
     }
 
-    @tryCatchWrapperAsync
-    async updateDeliveryType(code: DeliveryTypeCode, updateDeliveryType: UpdateDeliveryType): ReturningResultAsync<boolean, Error> {
+    @tryCatchAsync
+    async updateDeliveryType(code: DeliveryTypeCode, updateDeliveryType: UpdateDeliveryType): TResultAsync<boolean, Error> {
         type rT = Response;
         const payload = new URLSearchParams();
         payload.append("deliveryType", JSON.stringify(updateDeliveryType));
@@ -287,29 +281,29 @@ export class RetailCRM {
             }
         })).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(data.success);
+        return ok(data.success);
     }
 
     /**
      * Получение списка статусов товаров в заказе.
      */
-    @tryCatchWrapperAsync
-    async productStatuses(): ReturningResultAsync<ProductStatus[], Error> {
+    @tryCatchAsync
+    async productStatuses(): TResultAsync<ProductStatus[], Error> {
         type rT = ResponseProductStatuses;
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/product-statuses')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(RetailCRM.objectToArray(data.productStatuses));
+        return ok(RetailCRM.objectToArray(data.productStatuses));
     }
 
     /**
      * Получение списка складов
      */
-    @tryCatchWrapperAsync
-    async stores(): ReturningResultAsync<Store[], Error> {
+    @tryCatchAsync
+    async stores(): TResultAsync<Store[], Error> {
         type rT = ResponseStores;
         const {status, data} = (await this.instance.get<rT>('/api/v5/reference/stores')).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(RetailCRM.objectToArray(data.stores));
+        return ok(RetailCRM.objectToArray(data.stores));
     }
 
     /**
@@ -317,8 +311,8 @@ export class RetailCRM {
      * @param {IntegrationModuleCode} code
      * @param {CreateIntegrationModule} createIntegrationModule
      */
-    @tryCatchWrapperAsync
-    async createIntegrationModule(code: IntegrationModuleCode, createIntegrationModule: Partial<CreateIntegrationModule>): ReturningResultAsync<Info[], Error> {
+    @tryCatchAsync
+    async createIntegrationModule(code: IntegrationModuleCode, createIntegrationModule: Partial<CreateIntegrationModule>): TResultAsync<Info[], Error> {
         type rT = ResponseInfo;
         const payload = new URLSearchParams();
         payload.append("integrationModule", JSON.stringify(createIntegrationModule));
@@ -332,28 +326,28 @@ export class RetailCRM {
             }
         })).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(data.info);
+        return ok(data.info);
     }
 
     /**
      * Получение интеграционного модуля
      * @param code
      */
-    @tryCatchWrapperAsync
-    async getIntegrationModule(code: IntegrationModuleCode): ReturningResultAsync<IntegrationModule, Error> {
+    @tryCatchAsync
+    async getIntegrationModule(code: IntegrationModuleCode): TResultAsync<IntegrationModule, Error> {
         type rT = ResponseIntegrationModule;
         const {status, data} = (await this.instance.get<rT>(`/api/v5/integration-modules/${code}`)).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(data.integrationModule);
+        return ok(data.integrationModule);
     }
 
-    @tryCatchWrapperAsync
-    async getOrder(orderId: string, site?: string, by: 'externalId' | 'id' = 'externalId'): ReturningResultAsync<Record<string, any>, Error> {
+    @tryCatchAsync
+    async getOrder(orderId: string, site?: string, by: 'externalId' | 'id' = 'externalId'): TResultAsync<Record<string, any>, Error> {
         type rT = Record<string, any> & Response;
         let params = `?by=${by}`;
         if (site) params += `&site=${site}`;
         const {status, data} = (await this.instance.get<rT>(`/api/v5/orders/${orderId}${params}`)).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
-        return ResultOk(data.order);
+        return ok(data.order);
     }
 }
