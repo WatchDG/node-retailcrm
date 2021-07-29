@@ -84,12 +84,12 @@ type ContragentEnterpreneur = {
 
 type Contragent = ContragentIndividual | ContragentLegalEntity | ContragentEnterpreneur;
 
-type CreateOrder = {
+export type CreateOrder = {
     site: string;
     order: {
         number: string;
         externalId: string;
-        privilegeType: string;
+        privilegeType: 'none' | 'personal_discount' | 'loyalty_level' | 'loyalty_event';
         countryIso: string;
         // Если не задать createdAt, то будет использовано текущее время в качестве даты/времени оформления заказа.
         createdAt?: string;
@@ -117,7 +117,7 @@ type CreateOrder = {
         shipmentDate: string;
         shipped: boolean;
         // dialogId
-        customFields: object[];
+        customFields: Record<string, unknown>[];
         orderType: string;
         orderMethod: string;
         // Если не задать customer, то клиент будет автоматически создан на основе данных из заказа.
@@ -152,5 +152,6 @@ type CreateOrder = {
         shipmentStore: string;
         payments: CreateOrderPayment[];
         loyaltyEventId: number;
+        delivery: Record<string, unknown>;
     };
 }

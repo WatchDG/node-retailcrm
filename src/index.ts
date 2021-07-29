@@ -40,6 +40,7 @@ import {
     UpdateDeliveryType
 } from "./types/delivery-type";
 import {ResponseStores, Store} from "./types/store";
+import type {CreateOrder} from "./types/order";
 
 /**
  * @alias Options
@@ -347,6 +348,21 @@ export class RetailCRM {
         let params = `?by=${by}`;
         if (site) params += `&site=${site}`;
         const {status, data} = (await this.instance.get<rT>(`/api/v5/orders/${orderId}${params}`)).unwrap();
+        RetailCRM.checkResponse({status, data}).unwrap();
+        return ok(data.order);
+    }
+
+    @tryCatchAsync
+    async createOrder(createOrder: CreateOrder): TResultAsync<Record<string, any>, Error> {
+        type rT = Record<string, any> & Response;
+        const payload = new URLSearchParams();
+        payload.append("site", createOrder.site);
+        payload.append("order", JSON.stringify(createOrder.order));
+        const {status, data} = (await this.instance.post<rT>(` /api/v5/orders/create`, payload.toString(), {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded'
+            }
+        })).unwrap();
         RetailCRM.checkResponse({status, data}).unwrap();
         return ok(data.order);
     }
